@@ -46,7 +46,7 @@ class LFUCache(BaseCaching):
             self.counter[key] += 1
             self.mv_right_list(key)
         return item
-    
+
     def mv_right_list(self, item):
         """ Moves element to the right, taking into account LFU """
         length = len(self.queue)
