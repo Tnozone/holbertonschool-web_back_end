@@ -41,4 +41,3 @@ class LIFOCache(BaseCaching):
         if self.queue[length - 1] != item:
             self.queue.remove(item)
             self.queue.append(item)
-             

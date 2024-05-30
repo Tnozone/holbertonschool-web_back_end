@@ -1,12 +1,11 @@
 #!/usr/bin/python3
-""" FIFO Cache
-"""
+""" LRU Caching """
 
 from base_caching import BaseCaching
 
 
-class FIFOCache(BaseCaching):
-    """FIFO Caching"""
+class LRUCache(BaseCaching):
+    """ LRU caching """
 
     def __init__(self):
         """ Constructor """
@@ -14,14 +13,9 @@ class FIFOCache(BaseCaching):
         self.queue = []
 
     def put(self, key, item):
-        """Puts item in cache"""
+        """ Puts item in cache """
         if key is None or item is None:
             return
-
-        if key not in self.queue:
-            self.queue.append(key)
-        else:
-            self.mv_last_list(key)
 
         self.cache_data[key] = item
 
@@ -32,9 +26,17 @@ class FIFOCache(BaseCaching):
                 del self.cache_data[first]
                 print("DISCARD: {}".format(first))
 
+        if key not in self.queue:
+            self.queue.append(key)
+        else:
+            self.mv_last_list(key)
+
     def get(self, key):
         """ Gets item from cache """
-        return self.cache_data.get(key, None)
+        item = self.cache_data.get(key, None)
+        if item is not None:
+            self.mv_last_list(key)
+        return item
 
     def mv_last_list(self, item):
         """ Moves element to last idx of list """
