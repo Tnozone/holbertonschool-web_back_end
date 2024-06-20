@@ -12,7 +12,7 @@ class Auth:
         """ Method for validating if endpoint requires auth """
         return False
 
-    
+
     def authorization_header(self, request=None) -> str:
         """ Method that handles authorization header """
         return None
