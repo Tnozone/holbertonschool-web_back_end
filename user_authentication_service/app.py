@@ -20,3 +20,46 @@ def hello_world() -> str:
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
+
+
+@app.route('/sessions', methods=['POST'])
+def log_in() -> str:
+    """ Logs in a user and returns session ID """
+    try:
+        email = request.form['email']
+        password = request.form['password']
+    except KeyError:
+        abort(400)
+
+    if not AUTH.valid_login(email, password):
+        abort(401)
+
+    session_id = AUTH.create_session(email)
+
+    msg = {"email": email, "message": "logged in"}
+    response = jsonify(msg)
+
+    response.set_cookie("session_id", session_id)
+
+    return response
+
+
+@app.route('/sessions', methods=['DELETE'])
+def log_out() -> str:
+    """Find the user with the requested session ID.
+    If the user exists destroy the session and redirect the user to GET /.
+    If the user does not exist, respond with a 403 HTTP status.
+    """
+    session_id = request.cookies.get("session_id", None)
+
+    if session_id is None:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if user is None:
+        abort(403)
+
+    AUTH.destroy_session(user.id)
+
+    return redirect('/')
