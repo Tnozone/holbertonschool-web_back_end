@@ -18,8 +18,22 @@ def hello_world() -> str:
     return jsonify(msg)
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000")
+@app.route('/users', methods=['POST'])
+def register_user() -> str:
+    """Registers a new user if it does not exist before"""
+    try:
+        email = request.form['email']
+        password = request.form['password']
+    except KeyError:
+        abort(400)
+
+    try:
+        user = AUTH.register_user(email, password)
+    except ValueError:
+        return jsonify({"message": "email already registered"}), 400
+
+    msg = {"email": email, "message": "user created"}
+    return jsonify(msg)
 
 
 @app.route('/sessions', methods=['POST'])
@@ -64,6 +78,7 @@ def log_out() -> str:
 
     return redirect('/')
 
+
 @app.route('/profile', methods=['GET'])
 def profile() -> str:
     """ If the user exist, respond with a 200 HTTP status and a JSON Payload
@@ -81,6 +96,52 @@ def profile() -> str:
 
     msg = {"email": user.email}
 
+    return jsonify(msg), 200
+
+
+@app.route('/reset_password', methods=['POST'])
+def reset_password() -> str:
+    """If the email is not registered, respond with a 403 status code.
+    Otherwise, generate a token and respond with a
+    200 HTTP status and JSON Payload
+    """
+    try:
+        email = request.form['email']
+    except KeyError:
+        abort(403)
+
+    try:
+        reset_token = AUTH.get_reset_password_token(email)
+    except ValueError:
+        abort(403)
+
+    msg = {"email": email, "reset_token": reset_token}
+
+    return jsonify(msg), 200
+
+
+@app.route('/reset_password', methods=['PUT'])
+def update_password() -> str:
+    """ PUT /reset_password
+    Updates password with reset token
+    Return:
+        - 400 if bad request
+        - 403 if not valid reset token
+        - 200 and JSON Payload if valid
+    """
+    try:
+        email = request.form['email']
+        reset_token = request.form['reset_token']
+        new_password = request.form['new_password']
+    except KeyError:
+        abort(400)
+
+    try:
+        AUTH.update_password(reset_token, new_password)
+    except ValueError:
+        abort(403)
+
+    msg = {"email": email, "message": "Password updated"}
     return jsonify(msg), 200
 
 
