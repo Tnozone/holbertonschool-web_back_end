@@ -6,5 +6,5 @@ Repository for back-end projects done at Holberton School.
 - **Unittests and Integration Tests**: Testing of modules.
 - **Caching**: How to create data storages.
 - **i18n**: Adapting software to different languages.
-- **Personal Data**:
+- **Personal Data**: How to encrypt the user's personal data.
 - **User Authentication Service**:
