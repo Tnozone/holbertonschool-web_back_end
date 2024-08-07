@@ -67,7 +67,6 @@ def replay(fn: Callable):
         print(f'{f_name}(*{i}) -> {o}')
 
 
-
 class Cache:
     """ Class for implementing a Cache """
 
