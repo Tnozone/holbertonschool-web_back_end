@@ -1,4 +1,4 @@
--- 1. We are all unique!
+-- 1. In and not out
 -- creates a table users
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT, 
